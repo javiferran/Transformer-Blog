@@ -1,0 +1,6 @@
+**/.sos
+**/.ipynb_checkpoints
+docs/__pycache__
+data/*.csv
+data/README.txt
+data/data.tar.gz
