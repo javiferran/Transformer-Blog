@@ -11793,34 +11793,23 @@ $( document ).ready(function(){
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1><center>The Transformer Blog: fairseq edition</center></h1>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="k">import</span> <span class="n">drive</span>
-<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">display</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Mounted at /content/drive
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -11831,27 +11820,6 @@ $( document ).ready(function(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The Transformer architecture was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks.</p>
 <p>In this post we present an explanation of the Transformer architecture focusing on the fairseq implementation. We believe this could be useful for researchers and developers working on this framework.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Prelims">Prelims<a class="anchor-link" href="#Prelims">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Table-of-Contents">Table of Contents<a class="anchor-link" href="#Table-of-Contents">&#182;</a></h2><ul>
-<li><a href="#background">Background</a></li>
-<li><a href="#model-architecture">Model Architecture</a></li>
-<li><a href="#encoder-and-decoder">Encoder Decoder Stacks</a> </li>
-</ul>
 
 </div>
 </div>
@@ -11890,43 +11858,14 @@ $( document ).ready(function(){
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">display</span>
-<span class="n">path_to_drive</span> <span class="o">=</span> <span class="s1">&#39;/content/drive/My Drive/PhD/Colabs/&#39;</span>
-<span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path_to_drive</span> <span class="o">+</span> <span class="s1">&#39;images/transformer_illustrated.png&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">800</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">600</span><span class="p">)</span>
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>&lt;img src="The_Transformer_Blog_files/transformer_illustrated.png" width = "800", height = "550" align="center"/&gt;</p>
 
 </div>
 </div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[4]:</div>
-
-
-
-
-<div class="output_png output_subarea output_execute_result">
-<img src="The_Transformer_Blog_files/The_Transformer_Blog_8_0.png"
-width=800
-height=600
->
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -11997,41 +11936,14 @@ height=600
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path_to_drive</span> <span class="o">+</span> <span class="s1">&#39;images/encoder_input.png&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">200</span><span class="p">)</span>
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>&lt;img src="The_Transformer_Blog_files/encoder_input.png" width = "600", height = "200" align="center"/&gt;</p>
 
 </div>
 </div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[26]:</div>
-
-
-
-
-<div class="output_png output_subarea output_execute_result">
-<img src="The_Transformer_Blog_files/The_Transformer_Blog_13_0.png"
-width=600
-height=200
->
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -12110,41 +12022,14 @@ height=200
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path_to_drive</span> <span class="o">+</span> <span class="s1">&#39;images/encoder_layer_transformer_full.png&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">350</span><span class="p">)</span>
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>&lt;img src="The_Transformer_Blog_files/encoder_layer_transformer_full.png" width = "400", height = "350" align="center"/&gt;</p>
 
 </div>
 </div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[20]:</div>
-
-
-
-
-<div class="output_png output_subarea output_execute_result">
-<img src="The_Transformer_Blog_files/The_Transformer_Blog_18_0.png"
-width=400
-height=350
->
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -12353,47 +12238,20 @@ $$</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path_to_drive</span> <span class="o">+</span> <span class="s1">&#39;images/probs.jpg&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">250</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[25]:</div>
-
-
-
-
-<div class="output_jpeg output_subarea output_execute_result">
-<img src="The_Transformer_Blog_files/The_Transformer_Blog_33_0.jpeg"
-width=600
-height=250
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The division by the square root of the dimension of the key vectors $d_{k}$ (for getting more stable gradients) is done previously <code class="language-plaintext highlighter-rouge">q *= self.scaling</code> instead in fairseq.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>&lt;img src="The_Transformer_Blog_files/probs.jpg" width="600" height = "400" align="center"/&gt;</p>
 
 </div>
 </div>
@@ -12488,7 +12346,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h2><p>The decoder (<code class="language-plaintext highlighter-rouge">class TransformerDecoder(FairseqDecoder)</code>) is composed of a stack of $N=decoder\_layers$ identical layers</p>
+<h2 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h2><p>The decoder is composed of a stack of $N=decoder\_layers$ identical layers.</p>
 
 </div>
 </div>
@@ -12497,46 +12355,10 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack.  Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization.</p>
+<p><img src="The_Transformer_Blog_files/transformer_decoding.gif" width="600" height="500" align="center"></p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path_to_drive</span> <span class="o">+</span> <span class="s1">&#39;images/Decoder.png&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">250</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[&nbsp;]:</div>
-
-
-
-
-<div class="output_png output_subarea output_execute_result">
-<img src="The_Transformer_Blog_files/The_Transformer_Blog_43_0.png"
-width=300
-height=250
->
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12558,17 +12380,17 @@ height=250
         <span class="n">return_all_hiddens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         
-        <span class="n">x</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span>
-            <span class="n">prev_output_tokens</span><span class="p">,</span>
-            <span class="n">encoder_out</span><span class="o">=</span><span class="n">encoder_out</span><span class="p">,</span>
-            <span class="n">incremental_state</span><span class="o">=</span><span class="n">incremental_state</span><span class="p">,</span>
-            <span class="n">full_context_alignment</span><span class="o">=</span><span class="n">full_context_alignment</span><span class="p">,</span>
-            <span class="n">alignment_layer</span><span class="o">=</span><span class="n">alignment_layer</span><span class="p">,</span>
-            <span class="n">alignment_heads</span><span class="o">=</span><span class="n">alignment_heads</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">features_only</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">extra</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span>
+        <span class="n">prev_output_tokens</span><span class="p">,</span>
+        <span class="n">encoder_out</span><span class="o">=</span><span class="n">encoder_out</span><span class="p">,</span>
+        <span class="n">incremental_state</span><span class="o">=</span><span class="n">incremental_state</span><span class="p">,</span>
+        <span class="n">full_context_alignment</span><span class="o">=</span><span class="n">full_context_alignment</span><span class="p">,</span>
+        <span class="n">alignment_layer</span><span class="o">=</span><span class="n">alignment_layer</span><span class="p">,</span>
+        <span class="n">alignment_heads</span><span class="o">=</span><span class="n">alignment_heads</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">features_only</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">extra</span>
 </pre></div>
 
 </div>
@@ -12590,14 +12412,14 @@ height=250
         <span class="n">alignment_layer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">alignment_heads</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features_scriptable</span><span class="p">(</span>
-            <span class="n">prev_output_tokens</span><span class="p">,</span>
-            <span class="n">encoder_out</span><span class="p">,</span>
-            <span class="n">incremental_state</span><span class="p">,</span>
-            <span class="n">full_context_alignment</span><span class="p">,</span>
-            <span class="n">alignment_layer</span><span class="p">,</span>
-            <span class="n">alignment_heads</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features_scriptable</span><span class="p">(</span>
+        <span class="n">prev_output_tokens</span><span class="p">,</span>
+        <span class="n">encoder_out</span><span class="p">,</span>
+        <span class="n">incremental_state</span><span class="p">,</span>
+        <span class="n">full_context_alignment</span><span class="p">,</span>
+        <span class="n">alignment_layer</span><span class="p">,</span>
+        <span class="n">alignment_heads</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12619,55 +12441,87 @@ height=250
         <span class="n">alignment_layer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">alignment_heads</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-  
   <span class="o">..</span>
+    <span class="n">attn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">inner_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">full_context_alignment</span><span class="p">:</span>
+            <span class="n">self_attn_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffered_future_mask</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">self_attn_mask</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="c1"># decoder layers</span>
-        <span class="n">attn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">inner_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">full_context_alignment</span><span class="p">:</span>
-                <span class="n">self_attn_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffered_future_mask</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">self_attn_mask</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">layer_attn</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">encoder_out</span><span class="o">.</span><span class="n">encoder_out</span> <span class="k">if</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">encoder_out</span><span class="o">.</span><span class="n">encoder_padding_mask</span> <span class="k">if</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">incremental_state</span><span class="p">,</span>
+            <span class="n">self_attn_mask</span><span class="o">=</span><span class="n">self_attn_mask</span><span class="p">,</span>
+            <span class="n">self_attn_padding_mask</span><span class="o">=</span><span class="n">self_attn_padding_mask</span><span class="p">,</span>
+            <span class="n">need_attn</span><span class="o">=</span><span class="nb">bool</span><span class="p">((</span><span class="n">idx</span> <span class="o">==</span> <span class="n">alignment_layer</span><span class="p">)),</span>
+            <span class="n">need_head_weights</span><span class="o">=</span><span class="nb">bool</span><span class="p">((</span><span class="n">idx</span> <span class="o">==</span> <span class="n">alignment_layer</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="n">inner_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layer_attn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">==</span> <span class="n">alignment_layer</span><span class="p">:</span>
+            <span class="n">attn</span> <span class="o">=</span> <span class="n">layer_attn</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-            <span class="n">x</span><span class="p">,</span> <span class="n">layer_attn</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span>
-                <span class="n">x</span><span class="p">,</span>
-                <span class="n">encoder_out</span><span class="o">.</span><span class="n">encoder_out</span> <span class="k">if</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">encoder_out</span><span class="o">.</span><span class="n">encoder_padding_mask</span> <span class="k">if</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">incremental_state</span><span class="p">,</span>
-                <span class="n">self_attn_mask</span><span class="o">=</span><span class="n">self_attn_mask</span><span class="p">,</span>
-                <span class="n">self_attn_padding_mask</span><span class="o">=</span><span class="n">self_attn_padding_mask</span><span class="p">,</span>
-                <span class="n">need_attn</span><span class="o">=</span><span class="nb">bool</span><span class="p">((</span><span class="n">idx</span> <span class="o">==</span> <span class="n">alignment_layer</span><span class="p">)),</span>
-                <span class="n">need_head_weights</span><span class="o">=</span><span class="nb">bool</span><span class="p">((</span><span class="n">idx</span> <span class="o">==</span> <span class="n">alignment_layer</span><span class="p">)),</span>
-            <span class="p">)</span>
-            <span class="n">inner_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">layer_attn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">==</span> <span class="n">alignment_layer</span><span class="p">:</span>
-                <span class="n">attn</span> <span class="o">=</span> <span class="n">layer_attn</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">alignment_heads</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span><span class="p">[:</span><span class="n">alignment_heads</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">attn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">alignment_heads</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span><span class="p">[:</span><span class="n">alignment_heads</span><span class="p">]</span>
+        <span class="c1"># average probabilities over heads</span>
+        <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-            <span class="c1"># average probabilities over heads</span>
-            <span class="n">attn</span> <span class="o">=</span> <span class="n">attn</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c1"># T x B x C -&gt; B x T x C</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="c1"># T x B x C -&gt; B x T x C</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_out_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_out_dim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_out_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_out_dim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;attn&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">attn</span><span class="p">],</span> <span class="s2">&quot;inner_states&quot;</span><span class="p">:</span> <span class="n">inner_states</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;attn&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">attn</span><span class="p">],</span> <span class="s2">&quot;inner_states&quot;</span><span class="p">:</span> <span class="n">inner_states</span><span class="p">}</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Decoder-Layer">Decoder Layer<a class="anchor-link" href="#Decoder-Layer">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The previous snipped of code shows a loop over the layers of the Decoder block <code class="language-plaintext highlighter-rouge">for idx, layer in enumerate(self.layers):</code>. This layer is implemented in fairseq in <code class="language-plaintext highlighter-rouge">class TransformerDecoderLayer(nn.Module)</code> inside <a href="https://github.com/pytorch/fairseq/blob/master/fairseq/modules/transformer_layer.py">fairseq/modules/transformer_layer.py</a> and computes the following operations:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>&lt;img src="The_Transformer_Blog_files/Decoder.png" width = "300", height = "250" align="center"/&gt;</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack.  Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization.</p>
+
+</div>
+</div>
 </div>
     </div>
   </div>
