@@ -12343,7 +12343,7 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h2><p>The decoder is composed of a stack of $N=decoder\_layers$ identical layers.</p>
-<p>It takes the encoder's output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> as $K$ and $V$ matrices and generates one embedding per target token at each time step. This embedding is then passed through a linear transformation together with a softmax activation function <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary, from which the token with highest probability is chosen and inserted as input of the decoder for the next time step.</p>
+<p>It takes the encoder's output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code>, as $K$ and $V$ matrices, and <code class="language-plaintext highlighter-rouge">prev_output_tokens</code> generates one embedding per target token at each time step. This embedding is then passed through a linear transformation together with a softmax activation function <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary, from which the token with highest probability is chosen and inserted as input of the decoder (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) for the next time step.</p>
 
 </div>
 </div>
@@ -12515,7 +12515,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack.  Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization.</p>
+<p>In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack.  Similar to the encoder, it employs residual connections around each of the sub-layers, followed by layer normalization.</p>
 
 </div>
 </div>
@@ -12540,21 +12540,9 @@ $$</p>
         <span class="n">need_attn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">need_head_weights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            x (Tensor): input to the layer of shape `(seq_len, batch, embed_dim)`</span>
-<span class="sd">            encoder_padding_mask (ByteTensor, optional): binary</span>
-<span class="sd">                ByteTensor of shape `(batch, src_len)` where padding</span>
-<span class="sd">                elements are indicated by ``1``.</span>
-<span class="sd">            need_attn (bool, optional): return attention weights</span>
-<span class="sd">            need_head_weights (bool, optional): return attention weights</span>
-<span class="sd">                for each head (default: return average over heads).</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            encoded output of shape `(seq_len, batch, embed_dim)`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">need_head_weights</span><span class="p">:</span>
-            <span class="n">need_attn</span> <span class="o">=</span> <span class="kc">True</span>
 
+        <span class="o">...</span>
+        
         <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -12569,29 +12557,32 @@ $$</p>
             <span class="k">assert</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_set_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">,</span> <span class="n">saved_state</span><span class="p">)</span>
         <span class="n">_self_attn_input_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_get_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_self_attention</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
-            <span class="n">incremental_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="n">_self_attn_input_buffer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="s2">&quot;prev_key&quot;</span> <span class="ow">in</span> <span class="n">_self_attn_input_buffer</span>
-        <span class="p">):</span>
-            <span class="k">if</span> <span class="n">self_attn_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="n">self_attn_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">encoder_out</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">self_attn_mask</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="n">self_attn_padding_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">encoder_padding_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">assert</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="n">encoder_padding_mask</span> <span class="o">=</span> <span class="n">self_attn_padding_mask</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span>
-                        <span class="n">encoder_out</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">encoder_out</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                    <span class="p">)</span>
-                <span class="n">self_attn_padding_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">encoder_padding_mask</span><span class="p">,</span> <span class="n">self_attn_padding_mask</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
-                <span class="p">)</span>
-            <span class="k">assert</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">encoder_out</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
+        
+        
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then self-attention is done between the</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">...</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
 
         <span class="n">x</span><span class="p">,</span> <span class="n">attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="p">(</span>
             <span class="n">query</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
