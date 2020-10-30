@@ -11805,8 +11805,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer architecture was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks.</p>
-<p>In this post we present an explanation of the Transformer architecture focusing on the fairseq implementation. We believe this could be useful for researchers and developers working on this framework.</p>
+<p>The Transformer architecture was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we present an explanation of the Transformer architecture focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers working on this framework.</p>
+<p>The blog is based on <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">The annotated Transformer</a> and <a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> blogs.</p>
 
 </div>
 </div>
@@ -11840,7 +11840,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of symbol representations $(x_1, ..., x_n)$ to a sequence of continuous representations $\mathbf{encoder\_out} = (encoder\_out_1, ..., encoder\_out_n)$. Given $\mathbf{encoder\_out}$, the decoder then generates an output sequence $(y_1,...,y_m)$ of symbols one element at a time. At each step the model is auto-regressive <a href="https://arxiv.org/abs/1308.0850">(cite)</a>, consuming the previously generated symbols as additional input when generating the next.</p>
+<p>The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of symbol representations $(x_1, ..., x_n)$ to a sequence of continuous representations $\mathbf{encoder\_out} = (encoder\_out_1, ..., encoder\_out_n)$. Given $\mathbf{encoder\_out}$, the decoder then generates an output sequence $(y_1,...,y_m)$ of symbols one element at a time. At each step the model is auto-regressive <a href="https://arxiv.org/abs/1308.0850">(cite)</a>, consuming the previously generated symbols as additional input when generating the next token.</p>
 
 </div>
 </div>
@@ -11918,7 +11918,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Encoder">Encoder<a class="anchor-link" href="#Encoder">&#182;</a></h2><p>The encoder is composed of a stack of $N=encoder\_layers$ identical layers. The bottom encoder layer recieves <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is the (scaled) embedding lookup of shape (batch, src_lenghts, embed_dim) plus a positional embedding.</p>
+<h2 id="Encoder">Encoder<a class="anchor-link" href="#Encoder">&#182;</a></h2><p>The encoder is composed of a stack of $N=encoder\_layers$ identical layers. The bottom encoder layer recieves <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is the sum of the (scaled) embedding lookup of shape (batch, src_len, embed_dim) and a positional embedding.</p>
 
 </div>
 </div>
@@ -11996,7 +11996,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This returns a NamedTuple object <code class="language-plaintext highlighter-rouge">encoder_out</code>. By calling <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> we get the last layer encoder's embedding, which is used by the Decoder, as we will see.</p>
+<p>This returns a NamedTuple object <code class="language-plaintext highlighter-rouge">encoder_out</code>. By calling <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> we get the last layer encoder's embedding which, as we will see, is used by the Decoder.</p>
 
 </div>
 </div>
@@ -12172,7 +12172,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Each matrix Query ($Q$), a Key ($K$), and a Value ($V$) are created by multiplying the encoder's input by three weight matrices, $W^{Q}, W^{K}$ and $W^{V}$. These $Q$, $K$ and $V$ are matrices in which each row represents the $q$, $k$ and $v$ vector corresponding to each token in the sequence.</p>
+<p>Each encoder layer input, entered as <code class="language-plaintext highlighter-rouge">query</code>, is multiplied by three weight matrices learned during the training process: $W^{Q}, W^{K}$ and $W^{V}$, obtaining $Q$, $K$ and $V$. Each row of this output matrices represents the query, key and value vectors of each token in the sequence, represented as $q$, $k$ and $v$ in the formulas that follow.</p>
 
 </div>
 </div>
@@ -12183,9 +12183,9 @@ $( document ).ready(function(){
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attention</span><span class="p">:</span>
-      <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_proj</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-      <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_proj</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-      <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_proj</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+      <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_proj</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="c1"># Q</span>
+      <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_proj</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="c1"># K</span>
+      <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_proj</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="c1"># V</span>
     <span class="n">q</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaling</span>
 </pre></div>
 
@@ -12211,8 +12211,7 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span>    <span class="n">attn_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">attn_weights</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="n">bsz</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="n">tgt_len</span><span class="p">,</span> <span class="n">src_len</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="n">attn_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="c1"># QK^T multiplication</span>
 </pre></div>
 
 </div>
@@ -12224,12 +12223,10 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Given a token in the input sequence, $i \in \mathcal{X}$, its query vector $q_{i}$ is passed to the self-attention function. Then, a multiple scores are calculated between the query vector $q_{i}$ and the key vectors of the same input sequence $k_{j} \forall j \in \mathcal{X}$. The scores are calculated by means of a dot product. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher score.</p>
-<p>This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding $i$. By multiplying $q_{i}$ by the matrix $K^{T}$, a list of <code class="language-plaintext highlighter-rouge">src_lengths</code> scores is output. The scores are then passed through a softmax layer giving bounded values:</p>
+<p>Given a token in the input sequence, $i \in \mathcal{X}$, its query vector $q_{i}$ is passed to the self-attention function. Then, by means of dot products, scalar values (scores) are obtained between the query vector $q_{i}$ and every key vector of the input sequence $k_{j} \forall j \in \mathcal{X}$. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher score.</p>
+<p>This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding $i$. By multiplying $q_{i}$ by the matrix $K^{T}$, a list of <code class="language-plaintext highlighter-rouge">src_len</code> scores is output. The scores are then passed through a softmax function giving bounded values:</p>
 <p>$$a_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
 = \frac{\exp(\mathbf{q}_i {K}^\top)}{ \sqrt{d_k} \sum_{k_{j} \in {K}^\top} \exp(\mathbf{q}_i k_{j})}$$</p>
-<p>where $K^\top$ is a matrix of key vectors corresponding to the the input sequence $\mathcal{X}$.</p>
-<p>For $i=\text{from}$, its corresponding attention weights $\alpha_{i}$ could be:</p>
 
 </div>
 </div>
@@ -12239,6 +12236,15 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The division by the square root of the dimension of the key vectors $d_{k}$ (for getting more stable gradients) is done previously <code class="language-plaintext highlighter-rouge">q *= self.scaling</code> instead in fairseq.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Given the sentence "the nice cat walks away from us" for the token $i=\text{from}$, its corresponding attention weights $\alpha_{i}$ for every other token $j$ in the input sequence could be:</p>
 
 </div>
 </div>
@@ -12276,7 +12282,7 @@ $$</p>
 <p>$$
 z_{i} = \sum_{j \in \mathcal{X}}\alpha_{i,j}v_{j}
 $$</p>
-<p>Where $z_{i}$ represents row $i$ of $Z$. By doing the matrix of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and $V$, $\mathrm{softmax}(\frac{QK^{T}}{d_{k}})V$, we directly get matrix $Z$.</p>
+<p>Where $z_{i}$ represents row $i$ of $Z$. By doing the matrix multiplication of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and $V$, $\mathrm{softmax}(\frac{QK^{T}}{d_{k}})V$, we directly get matrix $Z$.</p>
 
 </div>
 </div>
@@ -12333,6 +12339,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that <code class="language-plaintext highlighter-rouge">attn_probs</code> has dimensions (bsz * self.num_heads, tgt_len, src_len)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>To facilitate these residual connections, all sub-layers in the model, as well as the embedding layers, produce outputs of dimension $d_{\text{model}}=$<code class="language-plaintext highlighter-rouge">encoder_embed_dim</code>.</p>
 
 </div>
@@ -12343,7 +12358,7 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h2><p>The decoder is composed of a stack of $N=decoder\_layers$ identical layers.</p>
-<p>It takes the encoder's output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code>, as $K$ and $V$ matrices, and <code class="language-plaintext highlighter-rouge">prev_output_tokens</code> generates one embedding per target token at each time step. This embedding is then passed through a linear transformation together with a softmax activation function <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary, from which the token with highest probability is chosen and inserted as input of the decoder (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) for the next time step.</p>
+<p>It takes the encoder's output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> as $K$ and $V$ matrices and <code class="language-plaintext highlighter-rouge">prev_output_tokens</code> to generate one embedding per target token at each time step. This embedding is then passed through a linear layer together with a softmax activation function <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary, from which the token with highest probability is chosen and inserted as input of the decoder (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) for the next time step.</p>
 
 </div>
 </div>
