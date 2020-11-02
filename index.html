@@ -12282,7 +12282,7 @@ $$</p>
 <p>$$
 z_{i} = \sum_{j \in \mathcal{X}}\alpha_{i,j}v_{j}
 $$</p>
-<p>Where $z_{i}$ represents row $i$ of $Z$. By doing the matrix multiplication of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and $V$, $\mathrm{softmax}(\frac{QK^{T}}{d_{k}})V$, we directly get matrix $Z$.</p>
+<p>Where $z_{i}$ represents row $i$ of $Z$. By doing the matrix multiplication of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and $V$, $\mathrm{softmax}(\frac{QK^{T}}{\sqrt{d_k}})V$, we directly get matrix $Z$.</p>
 
 </div>
 </div>
