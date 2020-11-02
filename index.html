@@ -12200,7 +12200,7 @@ $( document ).ready(function(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The self-attention module does the following operation:</p>
 <p>$$
-\mathrm{softmax}(\frac{QK^{T}}{d_{k}})V
+\mathrm{softmax}(\frac{QK^\top}{\sqrt{d_{k}}})V
 $$</p>
 
 </div>
@@ -12225,8 +12225,8 @@ $$</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Given a token in the input sequence, $i \in \mathcal{X}$, its query vector $q_{i}$ is passed to the self-attention function. Then, by means of dot products, scalar values (scores) are obtained between the query vector $q_{i}$ and every key vector of the input sequence $k_{j} \forall j \in \mathcal{X}$. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher score.</p>
 <p>This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding $i$. By multiplying $q_{i}$ by the matrix $K^{T}$, a list of <code class="language-plaintext highlighter-rouge">src_len</code> scores is output. The scores are then passed through a softmax function giving bounded values:</p>
-<p>$$a_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
-= \frac{\exp(\mathbf{q}_i {K}^\top)}{ \sqrt{d_k} \sum_{k_{j} \in {K}^\top} \exp(\mathbf{q}_i k_{j})}$$</p>
+<p>$$\alpha_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
+= \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j \in \mathcal{X}} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}$$</p>
 
 </div>
 </div>
