@@ -11840,7 +11840,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of token representations $(x_1, ..., x_{src\_length})$ to a sequence of continuous representations $\mathbf{encoder\_out} = (encoder\_out_1, ..., encoder\_out_{src\_length})$. Given $\mathbf{encoder\_out}$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{tgt\_length})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.</p>
+<p>The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $src\_tokens=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $\mathbf{encoder\_out} = (encoder\_out_1, ..., encoder\_out_{src\_length})$. Given $\mathbf{encoder\_out}$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{tgt\_length})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.</p>
 
 </div>
 </div>
@@ -11849,7 +11849,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/transformer_illustrated.png" style="width:650px;height:370px;" align="center"/></p>
+<p><img src="The_Transformer_Blog_files/transformer_javifer.png" style="width:600px;height:600px;" align="center"/></p>
 
 </div>
 </div>
@@ -11919,7 +11919,7 @@ $( document ).ready(function(){
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Encoder">Encoder<a class="anchor-link" href="#Encoder">&#182;</a></h2><p>The encoder (<code class="language-plaintext highlighter-rouge">TransformerEncoder</code>) is composed of a stack of $N=encoder\_layers$ identical layers.</p>
-<p>The encoder recieves a list of tokens $src\_tokens=(token_{0},...,token_{src\_len})$ which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = embed + self.embed_positions(src_tokens)</code>.</p>
+<p>The encoder recieves a list of tokens $\mathcal{X}=src\_tokens=(token_{0},...,token_{src\_len})$ which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = self.embed_scale * self.embed_tokens(src_tokens) + self.embed_positions(src_tokens)</code>.</p>
 
 </div>
 </div>
@@ -11928,7 +11928,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/encoder_input.png" style="width:480px;height:150px;" align="center"/></p>
+<p>From now on, let's consider $X^L$ as the $L$ encoder layer input sequence. $X^{1}$ refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on $src\_tokens$.</p>
 
 </div>
 </div>
@@ -11937,7 +11937,32 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From now on, let's consider $\mathcal{X}^L = (x_{0},\cdots,x_{src\_length})$ as the $L$ encoder layer input. $X^{1}$ refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code>. Note that although $\mathcal{X}^L$ is represented in fairseq as a tensor of shape <code class="language-plaintext highlighter-rouge">src_length x batch x encoder_embed_dim</code>, for the shake of simplicity, we omit the second dimension in the upcoming mathematical notation and just consider it as a <code class="language-plaintext highlighter-rouge">src_length x encoder_embed_dim</code> matrix.</p>
+<p><img src="The_Transformer_Blog_files/operations.png" style="width:500px;height:150px;" align="center"/></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that although $X^L$ is represented in fairseq as a tensor of shape <code class="language-plaintext highlighter-rouge">src_length x batch x encoder_embed_dim</code>, for the shake of simplicity, we take <code class="language-plaintext highlighter-rouge">batch=1</code> in the upcoming mathematical notation and just consider it as a <code class="language-plaintext highlighter-rouge">src_length x encoder_embed_dim</code> matrix.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>$$
+X^L = \begin{bmatrix}
+x_{0}\\
+\vdots\\
+x_{src\_length}
+\end{bmatrix}
+$$</p>
+<p>Where $x_{i} \in \mathbb{R}^{encoder\_embed\_dim}$.</p>
 
 </div>
 </div>
@@ -11999,7 +12024,7 @@ $( document ).ready(function(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This returns a NamedTuple object <code class="language-plaintext highlighter-rouge">encoder_out</code>.</p>
 <ul>
-<li>encoder_out: of shape <code class="language-plaintext highlighter-rouge">src_length x batch x encoder_embed_dim</code>, the last layer encoder's embedding which, as we will see, is used by the Decoder. Note that is the same as $\mathcal{X}^{N+1}$.</li>
+<li>encoder_out: of shape <code class="language-plaintext highlighter-rouge">src_length x batch x encoder_embed_dim</code>, the last layer encoder's embedding which, as we will see, is used by the Decoder. Note that is the same as $X^{N+1}$ when <code class="language-plaintext highlighter-rouge">batch=1</code>.</li>
 <li>encoder_padding_mask: of shape <code class="language-plaintext highlighter-rouge">batch x src_length</code>. Binary ByteTensor where padding elements are indicated by 1.</li>
 <li>encoder_embedding: of shape <code class="language-plaintext highlighter-rouge">src_length x batch x encoder_embed_dim</code>, the words (scaled) embedding lookup.</li>
 <li>encoder_states: of shape <code class="language-plaintext highlighter-rouge">list[src_length x batch x encoder_embed_dim]</code>, intermediate enocoder layer's output.</li>
@@ -12029,7 +12054,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/encoder_layer_transformer_full.png" style="width:400px;height:350px;" align="center"/></p>
+<p><img src="The_Transformer_Blog_files/encoder_javifer.png" align="center"/></p>
 
 </div>
 </div>
@@ -12038,7 +12063,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The input of the encoder layer is passed through the self-attention module <code class="language-plaintext highlighter-rouge">self.self_attn</code>, dropout (<code class="language-plaintext highlighter-rouge">self.dropout_module(x)</code>) is then applied before getting to the Add &amp; Normalize module (made of a residual connection <code class="language-plaintext highlighter-rouge">self.residual_connection(x, residual)</code> and a layer normalization (LayerNorm) <code class="language-plaintext highlighter-rouge">self.self_attn_layer_norm(x)</code></p>
+<p>The input of the encoder layer is passed through the self-attention module <code class="language-plaintext highlighter-rouge">self.self_attn</code>, dropout (<code class="language-plaintext highlighter-rouge">self.dropout_module(x)</code>) is then applied before getting to the Residual &amp; Normalization module (made of a residual connection <code class="language-plaintext highlighter-rouge">self.residual_connection(x, residual)</code> and a layer normalization (LayerNorm) <code class="language-plaintext highlighter-rouge">self.self_attn_layer_norm(x)</code></p>
 
 </div>
 </div>
@@ -12080,7 +12105,7 @@ $( document ).ready(function(){
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Then, the result is passed through a position-wise feed-forward network composed by two fully connected layers, <code class="language-plaintext highlighter-rouge">fc1</code> and <code class="language-plaintext highlighter-rouge">fc2</code> with a ReLU activation in between (<code class="language-plaintext highlighter-rouge">self.activation_fn(self.fc1(x))</code>) and dropout <code class="language-plaintext highlighter-rouge">self.dropout_module(x)</code>.</p>
-<p>$$\mathrm{Feed Forward}(x)=\max(0, xW_1 + b_1) W_2 + b_2$$</p>
+<p>$$\text{Feed Forward}(x)=\max(0, xW_1 + b_1) W_2 + b_2$$</p>
 
 </div>
 </div>
@@ -12179,7 +12204,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Each encoder layer input $\mathcal{X}^L$, shown as <code class="language-plaintext highlighter-rouge">query</code>below since three copies of $query$ are passed to the self-attention module, is multiplied by three weight matrices learned during the training process: $W^{Q}, W^{K}$ and $W^{V}$, obtaining $Q$, $K$ and $V$. Each row of this output matrices represents the query, key and value vectors of each token in the sequence, represented as $q$, $k$ and $v$ in the formulas that follow.</p>
+<p>Each encoder layer input $X^L$, shown as <code class="language-plaintext highlighter-rouge">query</code>below since three copies of $query$ are passed to the self-attention module, is multiplied by three weight matrices learned during the training process: $W^{Q}, W^{K}$ and $W^{V}$, obtaining $Q$, $K$ and $V$. Each row of this output matrices represents the query, key and value vectors of each token in the sequence, represented as $q$, $k$ and $v$ in the formulas that follow.</p>
 
 </div>
 </div>
@@ -12230,10 +12255,10 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Given a token in the input sequence, $i \in \mathcal{X}^L$, its query vector $q_{i}$ is passed to the self-attention function. Then, by means of dot products, scalar values (scores) are obtained between the query vector $q_{i}$ and every key vector of the input sequence $k_{j} \forall j \in \mathcal{X}^L$. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher scores.</p>
+<p>Given a token in the input sequence, $i \in X^L$, its query vector $q_{i}$ is passed to the self-attention function. Then, by means of dot products, scalar values (scores) are obtained between the query vector $q_{i}$ and every key vector of the input sequence $k_{j} \forall j \in X^L$. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher scores.</p>
 <p>This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding $i$. By multiplying $q_{i}$ by the matrix $K^{T}$, a list of <code class="language-plaintext highlighter-rouge">src_length</code> scores is output. The scores are then passed through a softmax function giving bounded values:</p>
 <p>$$\alpha_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
-= \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j \in \mathcal{X}^L} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}$$</p>
+= \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j \in X^L} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}$$</p>
 
 </div>
 </div>
@@ -12285,9 +12310,9 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Once we have normalized scores for every pair of tokens $\{i,j\}$, we multiply these weights by the value vector $v_{j} \forall j \in \mathcal{X}$ (each row in matrix $V$) and finally sum up those vectors:</p>
+<p>Once we have normalized scores for every pair of tokens $\{i,j\}$, we multiply these weights by the value vector $v_{j} \forall j \in X^L$ (each row in matrix $V$) and finally sum up those vectors:</p>
 <p>$$
-z_{i} = \sum_{j \in \mathcal{X}}\alpha_{i,j}v_{j}
+z_{i} = \sum_{j \in X^L}\alpha_{i,j}v_{j}
 $$</p>
 <p>Where $z_{i}$ represents row $i$ of $Z$. By doing the matrix multiplication of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and $V$, $\mathrm{softmax}(\frac{QK^{T}}{\sqrt{d_k}})V$, we directly get matrix $Z$.</p>
 
@@ -12375,7 +12400,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/transformer_decoding.gif"  style="width:750px;height:400px;" align="center"/></p>
+<p><img src="The_Transformer_Blog_files/decoder_javifer.png" style="width:400px;height:500px;" align="center"/></p>
 
 </div>
 </div>
@@ -12452,6 +12477,7 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In the first time step, <code class="language-plaintext highlighter-rouge">prev_output_tokens</code> represents the beginning of sentence (BOS) token index. Its embedding <code class="language-plaintext highlighter-rouge">self.embed_tokens(prev_output_tokens)</code> enters the decoder as a tensor <code class="language-plaintext highlighter-rouge">beam*batch x tgt_len x encoder_embed_dim</code>. As in the decoder, to the input token is added a positional embedding.</p>
+<p>Let's consider $Y^L$ as the $L$ decoder layer input sequence. $X^{1}$ refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on $src\_tokens$.</p>
 
 </div>
 </div>
@@ -12471,7 +12497,10 @@ $$</p>
         <span class="n">alignment_heads</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
   <span class="o">..</span>
-    
+    <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embed_positions</span><span class="p">(</span>
+                <span class="n">prev_output_tokens</span><span class="p">,</span> <span class="n">incremental_state</span><span class="o">=</span><span class="n">incremental_state</span>
+            <span class="p">)</span>
     <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_tokens</span><span class="p">(</span><span class="n">prev_output_tokens</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">positions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">+=</span> <span class="n">positions</span>
@@ -12542,7 +12571,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/Decoder.png"  style="width:350px;height:280px;" align="center"/></p>
+<p><img src="The_Transformer_Blog_files/decoder_layer_javifer.png" align="center"/></p>
 
 </div>
 </div>
@@ -12607,7 +12636,7 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>During incremental decoding, <code class="language-plaintext highlighter-rouge">prev_output_tokens</code> $(output_{0},...,output_{t-1})$ enter the self-attention module as key and value vectors. However, only the last time step output token, $output_{t-1}$, enters as a query vector. So, query vectors now have one element in the second dimension, that is, there is no need to use matrix $Q$.
-As before, scalar values (scores) are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence $k_{j} \forall j \in \mathcal{Y&lt;t}$, where $\mathcal{Y}$ represents the decoder output sequence.</p>
+As before, scalar values (scores) are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence $k_{j} \forall j \in Y$.</p>
 
 </div>
 </div>
@@ -12616,7 +12645,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/incremental_decoding.png"   align="center"/></p>
+<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer.png" style="width:550px;height:400px;" align="center"/></p>
 
 </div>
 </div>
