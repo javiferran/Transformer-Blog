@@ -11805,7 +11805,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer architecture was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we present an explanation of the Transformer architecture on Neural Machine Translation focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers starting out on this framework.</p>
+<p>The Transformer was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we present an explanation of the Transformer architecture on Neural Machine Translation focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers starting out on this framework.</p>
 <p>The blog is inspired by <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">The annotated Transformer</a>, <a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> and <a href="https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html">Fairseq Transformer, BART</a> blogs.</p>
 
 </div>
@@ -12644,7 +12644,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved\_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from <code class="language-plaintext highlighter-rouge">output_{t-1}</code>.</p>
+<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from <code class="language-plaintext highlighter-rouge">output_{t-1}</code>.</p>
 <p>The last time step output token, $output_{t-1}$, enters as a query after been embedded. So, queries here have one element in the second dimension, that is, there is no need to use matrix $Q$ notation.
 As before, scalar values (scores) are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence.</p>
 
