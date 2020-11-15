@@ -12611,19 +12611,7 @@ $$</p>
         
         <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">prev_self_attn_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prev_key</span><span class="p">,</span> <span class="n">prev_value</span> <span class="o">=</span> <span class="n">prev_self_attn_state</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">saved_state</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;prev_key&quot;</span><span class="p">:</span> <span class="n">prev_key</span><span class="p">,</span>
-                <span class="s2">&quot;prev_value&quot;</span><span class="p">:</span> <span class="n">prev_value</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_self_attn_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key_padding_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_self_attn_state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="k">assert</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_set_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">,</span> <span class="n">saved_state</span><span class="p">)</span>
-        <span class="n">_self_attn_input_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_get_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">)</span>
-        
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>      
         
 </pre></div>
 
@@ -12645,6 +12633,37 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from <code class="language-plaintext highlighter-rouge">output_{t-1}</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>        <span class="k">if</span> <span class="n">prev_self_attn_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prev_key</span><span class="p">,</span> <span class="n">prev_value</span> <span class="o">=</span> <span class="n">prev_self_attn_state</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">saved_state</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;prev_key&quot;</span><span class="p">:</span> <span class="n">prev_key</span><span class="p">,</span>
+                <span class="s2">&quot;prev_value&quot;</span><span class="p">:</span> <span class="n">prev_value</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_self_attn_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key_padding_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_self_attn_state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_set_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">,</span> <span class="n">saved_state</span><span class="p">)</span>
+        <span class="n">_self_attn_input_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_get_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>The last time step output token, $output_{t-1}$, enters as a query after been embedded. So, queries here have one element in the second dimension, that is, there is no need to use matrix $Q$ notation.
 As before, scalar values (scores) are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence.</p>
 
@@ -12672,7 +12691,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer.png" style="width:700px;height:400px;" align="center"/></p>
+<p>Now, just one vector $z_{t}$ is generated at each time step by each head as a weighted average of the $v$ vectors.</p>
 
 </div>
 </div>
@@ -12681,7 +12700,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, just one vector $z_{t}$ is generated at each time step by each head as a weighted average of the $v$ vectors. The</p>
+<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer.png" style="width:700px;height:400px;" align="center"/></p>
 
 </div>
 </div>
@@ -12708,8 +12727,28 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual_connection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In a similar manner, keys and values calculated from the encoder output are also stored in <code class="language-plaintext highlighter-rouge">saved_state</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">encoder_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -12738,8 +12777,29 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual_connection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
 
-        <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As in the case of the encoder, the result is passed through a position-wise feed-forward network composed by two fully connected layers:</p>
+<p>$$\text{Feed Forward}(x)=\max(0, xW_1 + b_1) W_2 + b_2$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>        <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -12747,7 +12807,29 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation_dropout_module</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_module</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual_connection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
+        
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, a residual connection is made before another layer normalization layer.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual_connection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="o">...</span>
