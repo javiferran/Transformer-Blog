@@ -11805,25 +11805,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer architecture was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we present an explanation of the Transformer architecture focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers working on this framework.</p>
-<p>The blog is based on <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">The annotated Transformer</a>, <a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> and <a href="https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html">Fairseq Transformer, BART</a> blogs.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Background-">Background <a class="anchor" id="background" /><a class="anchor-link" href="#Background-">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer was introduced as an alternative model to RNNs and ConvNets that compute representations of its inputs in a constant number of operations. This is made thanks to the self-attention module, which is a kind of attention mechanism that relies on the input sequence of a single data sample to make representations of it.</p>
+<p>The Transformer architecture was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we present an explanation of the Transformer architecture on Neural Machine Translation focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers starting out on this framework.</p>
+<p>The blog is inspired by <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">The annotated Transformer</a>, <a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> and <a href="https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html">Fairseq Transformer, BART</a> blogs.</p>
 
 </div>
 </div>
@@ -11840,7 +11823,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=src\_tokens=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $\mathbf{encoder\_out} = (encoder\_out_1, ..., encoder\_out_{src\_len})$. Given $\mathbf{encoder\_out}$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.</p>
+<p>The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $encoder\_out = (encoder\_out_1, ..., encoder\_out_{src\_len})$. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.</p>
 
 </div>
 </div>
@@ -11850,6 +11833,15 @@ $( document ).ready(function(){
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="The_Transformer_Blog_files/transformer_javifer.png" style="width:600px;height:600px;" align="center"/></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To see the general structure of the code in fairseq implementation I recommend reading <a href="https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html">Fairseq Transformer, BART</a>.</p>
 
 </div>
 </div>
@@ -11919,7 +11911,7 @@ $( document ).ready(function(){
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Encoder">Encoder<a class="anchor-link" href="#Encoder">&#182;</a></h2><p>The encoder (<code class="language-plaintext highlighter-rouge">TransformerEncoder</code>) is composed of a stack of $N=encoder\_layers$ identical layers.</p>
-<p>The encoder recieves a list of tokens $\mathcal{X}=$<code class="language-plaintext highlighter-rouge">src_tokens</code>$=(token_{0},...,token_{src\_len})$ which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = self.embed_scale * self.embed_tokens(src_tokens) + self.embed_positions(src_tokens)</code>.</p>
+<p>The encoder recieves a list of tokens $\mathcal{X}=$<code class="language-plaintext highlighter-rouge">src_tokens</code>$=(token_{0},...,token_{src\_len})$ which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is made of the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = self.embed_scale * self.embed_tokens(src_tokens) + self.embed_positions(src_tokens)</code>.</p>
 
 </div>
 </div>
@@ -12045,7 +12037,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The previous snipped of code shows a loop over the layers of the Encoder block <code class="language-plaintext highlighter-rouge">for layer in self.layers</code>. This layer is implemented in fairseq in <code class="language-plaintext highlighter-rouge">class TransformerEncoderLayer(nn.Module)</code> inside <a href="https://github.com/pytorch/fairseq/blob/master/fairseq/modules/transformer_layer.py">fairseq/modules/transformer_layer.py</a> and computes the following operations:</p>
+<p>The previous snipped of code shows a loop over the layers of the Encoder block, <code class="language-plaintext highlighter-rouge">for layer in self.layers</code>. This layer is implemented in fairseq in <code class="language-plaintext highlighter-rouge">class TransformerEncoderLayer(nn.Module)</code> inside <a href="https://github.com/pytorch/fairseq/blob/master/fairseq/modules/transformer_layer.py">fairseq/modules/transformer_layer.py</a> and computes the following operations:</p>
 
 </div>
 </div>
@@ -12204,7 +12196,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Each encoder layer input $X^L$, shown as <code class="language-plaintext highlighter-rouge">query</code>below since three copies of $query$ are passed to the self-attention module, is multiplied by three weight matrices learned during the training process: $W^{Q}, W^{K}$ and $W^{V}$, obtaining $Q$, $K$ and $V$. Each row of this output matrices represents the query, key and value vectors of each token in the sequence, represented as $q$, $k$ and $v$ in the formulas that follow.</p>
+<p>Each encoder layer input $X^L$, shown as <code class="language-plaintext highlighter-rouge">query</code> below since three identical copies are passed to the self-attention module, is multiplied by three weight matrices learned during the training process: $W^{Q}, W^{K}$ and $W^{V}$, obtaining $Q$, $K$ and $V$. Each row of this output matrices represents the query, key and value vectors of each token in the sequence, represented as $q$, $k$ and $v$ in the formulas that follow.</p>
 
 </div>
 </div>
@@ -12263,33 +12255,6 @@ $$</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The division by the square root of the dimension of the key vectors $d_{k}$ (for getting more stable gradients) is done previously <code class="language-plaintext highlighter-rouge">q *= self.scaling</code> instead in fairseq.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Given the sentence "the nice cat walks away from us" for the token $i=\text{from}$, its corresponding attention weights $\alpha_{i}$ for every other token $j$ in the input sequence could be:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/probs.jpg" style="width:600px;height:250px;" align="center"/></p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
@@ -12305,6 +12270,33 @@ $$</p>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The division by the square root of the dimension of the key vectors $d_{k}$ (for getting more stable gradients) is done previously <code class="language-plaintext highlighter-rouge">q *= self.scaling</code> instead in fairseq.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, given the sentence "the nice cat walks away from us" for the token $i=\text{from}$, its corresponding attention weights $\alpha_{i}$ for every other token $j$ in the input sequence could be:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="The_Transformer_Blog_files/probs.jpg" style="width:600px;height:250px;" align="center"/></p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -12390,8 +12382,8 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h2><p>The decoder is composed of a stack of $N=decoder\_layers$ identical layers.</p>
-<p>The goal of the decoder is to generate a sequence $\mathcal{Y}$ in the target language. The <code class="language-plaintext highlighter-rouge">TransformerDecoder</code> inherits from <code class="language-plaintext highlighter-rouge">FairseqIncrementalDecoder</code>. It differs from the encoder in that it performs incremental decoding. This means that at each time step $t$ a forward pass is done through the decoder generating $output_{t}$, which is then fed as input to the next time step decoding process.</p>
-<p>The encoder output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> is used by the decoder (in each layer) together with $\mathcal{Y&lt;t}=(output_{0},...,output_{t-1})$ (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) to generate one feature vector per target token at each time step (<code class="language-plaintext highlighter-rouge">tgt_len = 1</code> in each forward pass). This feature vector is then passed through a linear layer together with a softmax activation function <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary.</p>
+<p>The goal of the decoder is to generate a sequence $\mathcal{Y}$ in the target language. The <code class="language-plaintext highlighter-rouge">TransformerDecoder</code> inherits from <code class="language-plaintext highlighter-rouge">FairseqIncrementalDecoder</code>. It differs from the encoder in that it performs incremental decoding. This means that at each time step $t$ a forward pass is done through the decoder, generating $output_{t}$, which is then fed as input to the next time step decoding process.</p>
+<p>The encoder output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> is used by the decoder (in each layer) together with $\mathcal{Y&lt;t}=(output_{0},...,output_{t-1})$ (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) to generate one feature vector per target token at each time step (<code class="language-plaintext highlighter-rouge">tgt_len = 1</code> in each forward pass). This feature vector is then transformed by a linear layer and passed through a softmax layer <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary.</p>
 <p>Following the beam search algorithm, top <code class="language-plaintext highlighter-rouge">beam</code> hypothesis are chosen and inserted in the batch dimension input of the decoder (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) for the next time step.</p>
 
 </div>
@@ -12410,7 +12402,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We consider $Y^L$ as the $L$ decoder layer input sequence. $Y^{1}$ refers then to the matrix representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">prev_output_tokens</code>. Note that here <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> is not defined, but we refer to <code class="language-plaintext highlighter-rouge">self.embed_tokens(prev_output_tokens)</code> and <code class="language-plaintext highlighter-rouge">self.embed_positions(prev_output_tokens)</code>.</p>
+<p>We consider $query^L$ as the $L$ decoder layer input sequence. $query^{1}$ refers then to the vector representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">prev_output_tokens</code>. Note that here <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> is not defined, but we refer to <code class="language-plaintext highlighter-rouge">self.embed_tokens(prev_output_tokens)</code> and <code class="language-plaintext highlighter-rouge">self.embed_positions(prev_output_tokens)</code>.</p>
 
 </div>
 </div>
@@ -12644,8 +12636,17 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>During incremental decoding, <code class="language-plaintext highlighter-rouge">prev_output_tokens</code> $(output_{0},...,output_{t-2})$ enter the self-attention module as key and value vectors that are stored in <code class="language-plaintext highlighter-rouge">saved_state</code>. Since there is no need to recompute $K$ snd $V$, incremental decoding caches these values. The last time step output token, $output_{t-1}$, enters as a query vector after been embedded. So, query vectors now have one element in the second dimension, that is, there is no need to use matrix $Q$ notation.
-As before, scalar values (scores) are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence $k_{j} \forall j \in Y^L$.</p>
+<h4 id="Self-attention-in-the-decoder">Self-attention in the decoder<a class="anchor-link" href="#Self-attention-in-the-decoder">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved\_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from <code class="language-plaintext highlighter-rouge">output_{t-1}</code>.</p>
+<p>The last time step output token, $output_{t-1}$, enters as a query after been embedded. So, queries here have one element in the second dimension, that is, there is no need to use matrix $Q$ notation.
+As before, scalar values (scores) are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence.</p>
 
 </div>
 </div>
@@ -12654,7 +12655,24 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer.png" style="width:550px;height:400px;" align="center"/></p>
+<h4 id="Encoder-Decoder-attention">Encoder-Decoder attention<a class="anchor-link" href="#Encoder-Decoder-attention">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The Encoder-Decoder attention receives key and values from the encoder output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> and the query from the previous module $z_{t}*$. Here, $q_{t}$ is compared against every key vector received from the encoder (and transformed by $W^K$).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer.png" style="width:700px;height:400px;" align="center"/></p>
 
 </div>
 </div>
