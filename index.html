@@ -11815,7 +11815,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Model-Architecture-">Model Architecture <a class="anchor" id="model-architecture" /><a class="anchor-link" href="#Model-Architecture-">&#182;</a></h1>
+<h1 id="Model-Architecture">Model Architecture<a class="anchor-link" href="#Model-Architecture">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -11902,15 +11902,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Encoder-and-Decoder-Stacks-">Encoder and Decoder Stacks <a class="anchor" id="encoder-and-decoder" /><a class="anchor-link" href="#Encoder-and-Decoder-Stacks-">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Encoder">Encoder<a class="anchor-link" href="#Encoder">&#182;</a></h2><p>The encoder (<code class="language-plaintext highlighter-rouge">TransformerEncoder</code>) is composed of a stack of $N=encoder\_layers$ identical layers.</p>
+<h1 id="Encoder">Encoder<a class="anchor-link" href="#Encoder">&#182;</a></h1><p>The encoder (<code class="language-plaintext highlighter-rouge">TransformerEncoder</code>) is composed of a stack of $N=encoder\_layers$ identical layers.</p>
 <p>The encoder recieves a list of tokens $\mathcal{X}=$<code class="language-plaintext highlighter-rouge">src_tokens</code>$=(token_{0},...,token_{src\_len})$ which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is made of the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = self.embed_scale * self.embed_tokens(src_tokens) + self.embed_positions(src_tokens)</code>.</p>
 
 </div>
@@ -12029,7 +12021,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Encoder-Layer">Encoder Layer<a class="anchor-link" href="#Encoder-Layer">&#182;</a></h3>
+<h2 id="Encoder-Layer">Encoder Layer<a class="anchor-link" href="#Encoder-Layer">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12152,7 +12144,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Self-attention">Self-attention<a class="anchor-link" href="#Self-attention">&#182;</a></h4>
+<h2 id="Self-attention">Self-attention<a class="anchor-link" href="#Self-attention">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12381,7 +12373,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h2><p>The decoder is composed of a stack of $N=decoder\_layers$ identical layers.</p>
+<h1 id="Decoder">Decoder<a class="anchor-link" href="#Decoder">&#182;</a></h1><p>The decoder is composed of a stack of $N=decoder\_layers$ identical layers.</p>
 <p>The goal of the decoder is to generate a sequence $\mathcal{Y}$ in the target language. The <code class="language-plaintext highlighter-rouge">TransformerDecoder</code> inherits from <code class="language-plaintext highlighter-rouge">FairseqIncrementalDecoder</code>. It differs from the encoder in that it performs incremental decoding. This means that at each time step $t$ a forward pass is done through the decoder, generating $output_{t}$, which is then fed as input to the next time step decoding process.</p>
 <p>The encoder output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> is used by the decoder (in each layer) together with $\mathcal{Y&lt;t}=(output_{0},...,output_{t-1})$ (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) to generate one feature vector per target token at each time step (<code class="language-plaintext highlighter-rouge">tgt_len = 1</code> in each forward pass). This feature vector is then transformed by a linear layer and passed through a softmax layer <code class="language-plaintext highlighter-rouge">self.output_layer(x)</code> to get a probability distribution over the target language vocabulary.</p>
 <p>Following the beam search algorithm, top <code class="language-plaintext highlighter-rouge">beam</code> hypothesis are chosen and inserted in the batch dimension input of the decoder (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) for the next time step.</p>
@@ -12555,7 +12547,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Decoder-Layer">Decoder Layer<a class="anchor-link" href="#Decoder-Layer">&#182;</a></h3>
+<h2 id="Decoder-layer">Decoder layer<a class="anchor-link" href="#Decoder-layer">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12624,7 +12616,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Self-attention-in-the-decoder">Self-attention in the decoder<a class="anchor-link" href="#Self-attention-in-the-decoder">&#182;</a></h4>
+<h2 id="Self-attention-in-the-decoder">Self-attention in the decoder<a class="anchor-link" href="#Self-attention-in-the-decoder">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12632,7 +12624,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from <code class="language-plaintext highlighter-rouge">output_{t-1}</code>.</p>
+<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from $output_{t-1}$.</p>
 
 </div>
 </div>
@@ -12674,7 +12666,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Encoder-Decoder-attention">Encoder-Decoder attention<a class="anchor-link" href="#Encoder-Decoder-attention">&#182;</a></h4>
+<h2 id="Encoder-Decoder-attention">Encoder-Decoder attention<a class="anchor-link" href="#Encoder-Decoder-attention">&#182;</a></h2>
 </div>
 </div>
 </div>
