@@ -12737,7 +12737,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The Encoder-Decoder attention receives key and values from the encoder output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> and the query from the previous module $z_{t}*$. Here, $q_{t}$ is compared against every key vector received from the encoder (and transformed by $W^K$).</p>
-<p>As before, $K$ and $V$ don't need to be recomputed every time step since they are constant for the whole decoding process. However, Encoder-Decoder attention uses <code class="language-plaintext highlighter-rouge">static_kv=True</code> so that there is no need to update the <code class="language-plaintext highlighter-rouge">incremental\_state</code> (see previous code snipped).</p>
+<p>As before, $K$ and $V$ don't need to be recomputed every time step since they are constant for the whole decoding process. However, Encoder-Decoder attention uses <code class="language-plaintext highlighter-rouge">static_kv=True</code> so that there is no need to update the <code class="language-plaintext highlighter-rouge">incremental_state</code> (see previous code snipped).</p>
 
 </div>
 </div>
@@ -12755,7 +12755,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer_enc_dec_attn.png" style="width:700px;height:250px;" align="center"/></p>
+<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer_enc_dec_attn.png" align="center"/></p>
 
 </div>
 </div>
