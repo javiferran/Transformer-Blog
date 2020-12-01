@@ -12317,7 +12317,7 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This process is done in parallel in each of the self-attention heads. So, in total <code class="language-plaintext highlighter-rouge">encoder_attention_heads</code> matrices are output. Each head has its own $W^{Q}, W^{K}$ and $W^{V}$ weight matrices which are randomly initialized, so the result leads to different representation subspaces in each of the self-attention heads.</p>
-<p>The output matrices $Z$ of every self-attention head are concatenated into a single one to which a linear transformation $W^{O}$ (<code class="language-plaintext highlighter-rouge">self.out_proj</code>) is applied, $$attn = Concat(Z_{head_{i}},\cdots,Z_{head_{h}})W^{O}$$</p>
+<p>The output matrices $Z$ of every self-attention head are concatenated into a single one to which a linear transformation $W^{O}$ (<code class="language-plaintext highlighter-rouge">self.out_proj</code>) is applied, $$attn = Concat(Z^{head_{i}},\cdots,Z^{head_{h}})W^{O}$$</p>
 
 </div>
 </div>
@@ -12570,7 +12570,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack as input for $W^{K}$ and $W^{V}$ and the ouput of the sprevious module $z_{t}*$.  Similar to the encoder, it employs residual connections around each of the sub-layers, followed by layer normalization.</p>
+<p>In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack as input for $W^{K}$ and $W^{V}$ and the ouput of the sprevious module $attn_{t}*$.  Similar to the encoder, it employs residual connections around each of the sub-layers, followed by layer normalization.</p>
 
 </div>
 </div>
