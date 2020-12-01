@@ -11805,7 +11805,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Transformer was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we present an explanation of the Transformer architecture on Neural Machine Translation focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers starting out on this framework.</p>
+<p>The Transformer was presented in <a href="https://arxiv.org/abs/1706.03762">"Attention is All You Need"</a> and introduced a new architecture for many NLP tasks. In this post we exhibit an explanation of the Transformer architecture on Neural Machine Translation focusing on the <a href="https://github.com/pytorch/fairseq">fairseq</a> implementation. We believe this could be useful for researchers and developers starting out on this framework.</p>
 <p>The blog is inspired by <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">The annotated Transformer</a>, <a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> and <a href="https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html">Fairseq Transformer, BART</a> blogs.</p>
 
 </div>
@@ -11872,12 +11872,6 @@ $( document ).ready(function(){
           <span class="n">alignment_layer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
           <span class="n">alignment_heads</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
       <span class="p">):</span>
-          <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">          Run the forward pass for an encoder-decoder model.</span>
-
-<span class="sd">          Copied from the base class, but without ``**kwargs``,</span>
-<span class="sd">          which are not supported by TorchScript.</span>
-<span class="sd">          &quot;&quot;&quot;</span>
           <span class="n">encoder_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span>
               <span class="n">src_tokens</span><span class="p">,</span> <span class="n">src_lengths</span><span class="o">=</span><span class="n">src_lengths</span><span class="p">,</span> <span class="n">return_all_hiddens</span><span class="o">=</span><span class="n">return_all_hiddens</span>
           <span class="p">)</span>
@@ -12038,7 +12032,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/encoder_javifer.png" style="width:300px;height:400px;" align="center"/></p>
+<p><img src="The_Transformer_Blog_files/encoder_javifer.png" style="width:250px;height:400px;" align="center"/></p>
 
 </div>
 </div>
@@ -12623,11 +12617,49 @@ $$</p>
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">...</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">self_attn_padding_mask</span><span class="p">,</span>
+            <span class="n">incremental_state</span><span class="o">=</span><span class="n">incremental_state</span><span class="p">,</span> <span class="c1"># previous keys and values stored here</span>
+            <span class="n">need_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">attn_mask</span><span class="o">=</span><span class="n">self_attn_mask</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_module</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual_connection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">saved_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from $output_{t-1}$.</p>
+<p>During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">incremental_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from $output_{t-1}$. Then, updated $K$ and $V$ are stored in <code class="language-plaintext highlighter-rouge">prev_key</code> and passed again to <code class="language-plaintext highlighter-rouge">incremental\_state</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer_self_attn.png" align="center"/></p>
 
 </div>
 </div>
@@ -12637,17 +12669,44 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span>        <span class="k">if</span> <span class="n">prev_self_attn_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prev_key</span><span class="p">,</span> <span class="n">prev_value</span> <span class="o">=</span> <span class="n">prev_self_attn_state</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">saved_state</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;prev_key&quot;</span><span class="p">:</span> <span class="n">prev_key</span><span class="p">,</span>
-                <span class="s2">&quot;prev_value&quot;</span><span class="p">:</span> <span class="n">prev_value</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_self_attn_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key_padding_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_self_attn_state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span>        <span class="k">if</span> <span class="n">saved_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># saved states are stored with shape (bsz, num_heads, seq_len, head_dim)</span>
+            <span class="k">if</span> <span class="s2">&quot;prev_key&quot;</span> <span class="ow">in</span> <span class="n">saved_state</span><span class="p">:</span>
+                <span class="n">_prev_key</span> <span class="o">=</span> <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">_prev_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">prev_key</span> <span class="o">=</span> <span class="n">_prev_key</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">bsz</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">static_kv</span><span class="p">:</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">prev_key</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prev_key</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;prev_value&quot;</span> <span class="ow">in</span> <span class="n">saved_state</span><span class="p">:</span>
+                <span class="n">_prev_value</span> <span class="o">=</span> <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_value&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">_prev_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">prev_value</span> <span class="o">=</span> <span class="n">_prev_value</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">bsz</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">static_kv</span><span class="p">:</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">prev_value</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prev_value</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">prev_key_padding_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="s2">&quot;prev_key_padding_mask&quot;</span> <span class="ow">in</span> <span class="n">saved_state</span><span class="p">:</span>
+                <span class="n">prev_key_padding_mask</span> <span class="o">=</span> <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key_padding_mask&quot;</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">key_padding_mask</span> <span class="o">=</span> <span class="n">MultiheadAttention</span><span class="o">.</span><span class="n">_append_prev_key_padding_mask</span><span class="p">(</span>
+                <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">key_padding_mask</span><span class="p">,</span>
+                <span class="n">prev_key_padding_mask</span><span class="o">=</span><span class="n">prev_key_padding_mask</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">bsz</span><span class="p">,</span>
+                <span class="n">src_len</span><span class="o">=</span><span class="n">k</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">static_kv</span><span class="o">=</span><span class="n">static_kv</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">bsz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+            <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">bsz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span>
+            <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key_padding_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_padding_mask</span>
+            <span class="c1"># In this branch incremental_state is never None</span>
             <span class="k">assert</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_set_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">,</span> <span class="n">saved_state</span><span class="p">)</span>
-        <span class="n">_self_attn_input_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">_get_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">)</span>
+            <span class="n">incremental_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">,</span> <span class="n">saved_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12678,6 +12737,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The Encoder-Decoder attention receives key and values from the encoder output <code class="language-plaintext highlighter-rouge">encoder_out.encoder_out</code> and the query from the previous module $z_{t}*$. Here, $q_{t}$ is compared against every key vector received from the encoder (and transformed by $W^K$).</p>
+<p>As before, $K$ and $V$ don't need to be recomputed every time step since they are constant for the whole decoding process. However, Encoder-Decoder attention uses <code class="language-plaintext highlighter-rouge">static_kv=True</code> so that there is no need to update the <code class="language-plaintext highlighter-rouge">incremental\_state</code> (see previous code snipped).</p>
 
 </div>
 </div>
@@ -12695,45 +12755,7 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer.png" style="width:700px;height:400px;" align="center"/></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">...</span>
-
-        <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
-
-        <span class="n">x</span><span class="p">,</span> <span class="n">attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="p">(</span>
-            <span class="n">query</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-            <span class="n">key</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-            <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">self_attn_padding_mask</span><span class="p">,</span>
-            <span class="n">incremental_state</span><span class="o">=</span><span class="n">incremental_state</span><span class="p">,</span>
-            <span class="n">need_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">attn_mask</span><span class="o">=</span><span class="n">self_attn_mask</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_module</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual_connection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In a similar manner, keys and values calculated from the encoder output are also stored in <code class="language-plaintext highlighter-rouge">saved_state</code>.</p>
+<p><img src="The_Transformer_Blog_files/augmented_decoder_javifer_enc_dec_attn.png" style="width:700px;height:250px;" align="center"/></p>
 
 </div>
 </div>
@@ -12747,17 +12769,8 @@ As before, scalar values (scores) are obtained between the query vector $q_{t-1}
             <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_before</span><span class="p">:</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn_layer_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">prev_attn_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">prev_key</span><span class="p">,</span> <span class="n">prev_value</span> <span class="o">=</span> <span class="n">prev_attn_state</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-                <span class="n">saved_state</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;prev_key&quot;</span><span class="p">:</span> <span class="n">prev_key</span><span class="p">,</span>
-                    <span class="s2">&quot;prev_value&quot;</span><span class="p">:</span> <span class="n">prev_value</span><span class="p">,</span>
-                <span class="p">}</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_attn_state</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-                    <span class="n">saved_state</span><span class="p">[</span><span class="s2">&quot;prev_key_padding_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_attn_state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="n">incremental_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn</span><span class="o">.</span><span class="n">_set_input_buffer</span><span class="p">(</span><span class="n">incremental_state</span><span class="p">,</span> <span class="n">saved_state</span><span class="p">)</span>
-
+            <span class="o">...</span>
+            
             <span class="n">x</span><span class="p">,</span> <span class="n">attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_attn</span><span class="p">(</span>
                 <span class="n">query</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
                 <span class="n">key</span><span class="o">=</span><span class="n">encoder_out</span><span class="p">,</span>
