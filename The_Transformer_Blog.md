@@ -7,9 +7,9 @@ The blog is inspired by [The annotated Transformer](https://nlp.seas.harvard.edu
 
 # Model Architecture
 
-The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $encoder\_out = (encoder\_out_0, ..., encoder{\_}out_{src{\_}len})$. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.
+The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $encoder\_out = (encoder\_out_0, ..., encoder\_out_{src\_len})$. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.
 
-<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/transformer_javifer.png?raw=true" width="300" height="400" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/transformer_javifer.png?raw=true" style="max-width:50%;" align="center"/>
 
 To see the general structure of the code in fairseq implementation I recommend reading [Fairseq Transformer, BART](https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html).
 
@@ -52,7 +52,7 @@ The encoder recieves a list of tokens $\mathcal{X}=$<code class="language-plaint
 
 From now on, let's consider $X^L$ as the $L$ encoder layer input sequence. $X^{1}$ refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">src_tokens</code>.
 
-<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/operations.png?raw=true" style="width:450px;height:120px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/operations.png?raw=true" style="max-width:50%;" align="center"/>
 
 Note that although $X^L$ is represented in fairseq as a tensor of shape <code class="language-plaintext highlighter-rouge">src_len x batch x encoder_embed_dim</code>, for the shake of simplicity, we take <code class="language-plaintext highlighter-rouge">batch=1</code> in the upcoming mathematical notation and just consider it as a <code class="language-plaintext highlighter-rouge">src_len x encoder_embed_dim</code> matrix.
 
