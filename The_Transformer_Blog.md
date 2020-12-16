@@ -7,9 +7,9 @@ The blog is inspired by [The annotated Transformer](https://nlp.seas.harvard.edu
 
 # Model Architecture
 
-The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $encoder\_out = (encoder\_out_1, ..., encoder\_out_{src\_len})$. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.
+The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $encoder\_out = (encoder\_out_0, ..., encoder{\_}out_{src{\_}len})$. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.
 
-<img src="The_Transformer_Blog_files/transformer_javifer.png" style="width:600px;height:600px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/transformer_javifer.png?raw=true[](http://)" style="width:600px;height:600px;" align="center"/>
 
 To see the general structure of the code in fairseq implementation I recommend reading [Fairseq Transformer, BART](https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html).
 
@@ -52,7 +52,7 @@ The encoder recieves a list of tokens $\mathcal{X}=$<code class="language-plaint
 
 From now on, let's consider $X^L$ as the $L$ encoder layer input sequence. $X^{1}$ refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">src_tokens</code>.
 
-<img src="The_Transformer_Blog_files/operations.png" style="width:450px;height:120px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/operations.png?raw=true[](http://)" style="width:450px;height:120px;" align="center"/>
 
 Note that although $X^L$ is represented in fairseq as a tensor of shape <code class="language-plaintext highlighter-rouge">src_len x batch x encoder_embed_dim</code>, for the shake of simplicity, we take <code class="language-plaintext highlighter-rouge">batch=1</code> in the upcoming mathematical notation and just consider it as a <code class="language-plaintext highlighter-rouge">src_len x encoder_embed_dim</code> matrix.
 
@@ -121,7 +121,7 @@ This returns a NamedTuple object <code class="language-plaintext highlighter-rou
 
 The previous snipped of code shows a loop over the layers of the Encoder block, <code class="language-plaintext highlighter-rouge">for layer in self.layers</code>. This layer is implemented in fairseq in <code class="language-plaintext highlighter-rouge">class TransformerEncoderLayer(nn.Module)</code> inside [fairseq/modules/transformer_layer.py](https://github.com/pytorch/fairseq/blob/master/fairseq/modules/transformer_layer.py) and computes the following operations:
 
-<img src="The_Transformer_Blog_files/encoder_javifer.png" style="width:250px;height:400px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/encoder_javifer.png?raw=true[](http://)" style="width:250px;height:400px;" align="center"/>
 
 The input of the encoder layer is passed through the self-attention module <code class="language-plaintext highlighter-rouge">self.self_attn</code>, dropout (<code class="language-plaintext highlighter-rouge">self.dropout_module(x)</code>) is then applied before getting to the Residual & Normalization module (made of a residual connection <code class="language-plaintext highlighter-rouge">self.residual_connection(x, residual)</code> and a layer normalization (LayerNorm) <code class="language-plaintext highlighter-rouge">self.self_attn_layer_norm(x)</code>
 
@@ -227,8 +227,10 @@ Given a token in the input, $i \in X^L$, it is passed to the self-attention func
 
 This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding $i$. By multiplying $q_{i}$ by the matrix $K^{T}$, a list of <code class="language-plaintext highlighter-rouge">src_len</code> scores is output. The scores are then passed through a softmax function giving bounded values:
 
-$$\alpha_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
-= \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j=0}^{src\_len} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}$$
+$$
+\alpha_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
+= \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j=0}^{src\_len} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}
+$$
 
 
 ```python
@@ -243,7 +245,7 @@ The division by the square root of the dimension of the key vectors $d_{k}$ (for
 
 For example, given the sentence "the nice cat walks away from us" for the token $i=\text{from}$, its corresponding attention weights $\alpha_{i}$ for every other token $j$ in the input sequence could be:
 
-<img src="The_Transformer_Blog_files/probs.jpg" style="width:600px;height:250px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/probs.jpg?raw=true[](http://)" style="width:600px;height:250px;" align="center"/>
 
 Once we have normalized scores for every pair of tokens $\{i,j\}$, we multiply these weights by the value vector $v_{j} \forall j \in X^L$ (each row in matrix $V$) and finally sum up those vectors:
 
@@ -297,7 +299,7 @@ The encoder output <code class="language-plaintext highlighter-rouge">encoder_ou
 
 Following the beam search algorithm, top <code class="language-plaintext highlighter-rouge">beam</code> hypothesis are chosen and inserted in the batch dimension input of the decoder (<code class="language-plaintext highlighter-rouge">prev_output_tokens</code>) for the next time step.
 
-<img src="The_Transformer_Blog_files/decoder_javifer.png" style="width:400px;height:500px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/decoder_javifer.png?raw=true[](http://)" style="width:400px;height:500px;" align="center"/>
 
 We consider $query^L$ as the $L$ decoder layer input sequence. $query^{1}$ refers then to the vector representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">prev_output_tokens</code>. Note that here <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> is not defined, but we refer to <code class="language-plaintext highlighter-rouge">self.embed_tokens(prev_output_tokens)</code> and <code class="language-plaintext highlighter-rouge">self.embed_positions(prev_output_tokens)</code>.
 
@@ -418,7 +420,7 @@ def extract_features_scriptable(
 
 The previous snipped of code shows a loop over the layers of the Decoder block <code class="language-plaintext highlighter-rouge">for idx, layer in enumerate(self.layers):</code>. This layer is implemented in fairseq in <code class="language-plaintext highlighter-rouge">class TransformerDecoderLayer(nn.Module)</code> inside [fairseq/modules/transformer_layer.py](https://github.com/pytorch/fairseq/blob/master/fairseq/modules/transformer_layer.py) and computes the following operations:
 
-<img src="The_Transformer_Blog_files/incremental_decoding.png" style="width:450px;height:550px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/incremental_decoding.png?raw=true[](http://)" style="width:450px;height:550px;" align="center"/>
 
 In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer (Encoder-Decoder Attention), which performs multi-head attention over the output of the encoder stack as input for $W^{K}$ and $W^{V}$ and the ouput of the sprevious module $attn_{t}*$.  Similar to the encoder, it employs residual connections around each of the sub-layers, followed by layer normalization.
 
@@ -473,7 +475,7 @@ class TransformerDecoderLayer(nn.Module):
 
 During incremental decoding, $(output_{0},...,output_{t-2})$ enter the self-attention module as <code class="language-plaintext highlighter-rouge">prev_key</code> and <code class="language-plaintext highlighter-rouge">prev_value</code> vectors that are stored in <code class="language-plaintext highlighter-rouge">incremental_state</code>. Since there is no need to recompute $K$ and $V$ every time, incremental decoding caches these values and concatenates with keys an values from $output_{t-1}$. Then, updated $K$ and $V$ are stored in <code class="language-plaintext highlighter-rouge">prev_key</code> and passed again to <code class="language-plaintext highlighter-rouge">incremental_state</code>.
 
-<img src="The_Transformer_Blog_files/augmented_decoder_javifer_self_attn.png" style="width:750px;height:350px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/augmented_decoder_javifer_self_attn.png?raw=true[](http://)" style="width:750px;height:350px;" align="center"/>
 
 The last time step output token in each decoding step, $output_{t-1}$, enters as a query after been embedded. So, queries here have one element in the second dimension, that is, there is no need to use matrix $Q$ notation.
 As before, scalar values (scores) $\alpha$ are obtained between the query vector $q_{t-1}$ and every key vector of the whole previous tokens sequence.
@@ -538,7 +540,7 @@ As before, $K$ and $V$ don't need to be recomputed every time step since they ar
 
 Now, just one vector $z_{t}$ is generated at each time step by each head as a weighted average of the $v$ vectors.
 
-<img src="The_Transformer_Blog_files/augmented_decoder_javifer_enc_dec_attn.png" style="width:600px;height:350px;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/augmented_decoder_javifer_enc_dec_attn.png?raw=true[](http://)" style="width:600px;height:350px;" align="center"/>
 
 
 ```python
