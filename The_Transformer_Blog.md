@@ -9,7 +9,7 @@ The blog is inspired by [The annotated Transformer](https://nlp.seas.harvard.edu
 
 The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens $\mathcal{X}=(token_{0},...,token_{src\_len})$ to a sequence of continuous vector representations $encoder\_out = (encoder\_out_0, ..., encoder\_out_{src\_len})$. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.
 
-<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/transformer_javifer.png?raw=true" style="max-width:50%;" align="center"/>
+<img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/transformer_javifer.png?raw=true" width="200" align="center"/>
 
 To see the general structure of the code in fairseq implementation I recommend reading [Fairseq Transformer, BART](https://yinghaowang.xyz/technology/2020-03-14-FairseqTransformer.html).
 
