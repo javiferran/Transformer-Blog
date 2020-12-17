@@ -7,7 +7,7 @@ The blog is inspired by [The annotated Transformer](https://nlp.seas.harvard.edu
 
 # Model Architecture
 
-The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\mathcal{X}=(token_{0},...,token_{src\_len})" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\mathcal{X}=(token_{0},...,token_{src\_len})" title="\mathcal{X}=(token_{0},...,token_{src\_len})" vertical-align="text-bottom"/></a> to a sequence of continuous vector representations <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;encoder\_out&space;=&space;(encoder\_out_0,...,&space;encoder\_out_{src\_len})" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;encoder\_out&space;=&space;(encoder\_out_0,...,&space;encoder\_out_{src\_len})" title="encoder\_out = (encoder\_out_0,..., encoder\_out_{src\_len})" style="vertical-align:bottom"/></a>. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
+The Transformer is based on a stack of encoders and another stack of decoders. The encoder maps an input sequence of tokens <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\mathcal{X}=(token_{0},...,token_{src\_len})" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\mathcal{X}=(token_{0},...,token_{src\_len})" title="\mathcal{X}=(token_{0},...,token_{src\_len})" vertical-align="text-bottom"/></a> to a sequence of continuous vector representations <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;encoder\_out&space;=&space;(encoder\_out_0,...,&space;encoder\_out_{src\_len})" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;encoder\_out&space;=&space;(encoder\_out_0,...,&space;encoder\_out_{src\_len})" title="encoder\_out = (encoder\_out_0,..., encoder\_out_{src\_len})" style="vertical-align:middle"/></a>. Given $encoder\_out$, the decoder then generates an output sequence $\mathcal{Y} = (output_0,...,output_{T})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next token.
 
 <p align="center">
     <img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/transformer_javifer.png?raw=true" width="50%" align="center"/>
@@ -48,27 +48,21 @@ class TransformerModel(FairseqEncoderDecoderModel):
 
 # Encoder
 
-The encoder (<code class="language-plaintext highlighter-rouge">TransformerEncoder</code>) is composed of a stack of $N=encoder\_layers$ identical layers.
+The encoder (<code class="language-plaintext highlighter-rouge">TransformerEncoder</code>) is composed of a stack of <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;N=encoder\_layers" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;N=encoder\_layers" title="N=encoder\_layers" /></a> identical layers.
 
-The encoder recieves a list of tokens $\mathcal{X}=$<code class="language-plaintext highlighter-rouge">src_tokens</code>$=(token_{0},...,token_{src\_len})$ which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is made of the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = self.embed_scale * self.embed_tokens(src_tokens) + self.embed_positions(src_tokens)</code>.
+The encoder recieves a list of tokens <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\mathcal{X}=" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\mathcal{X}=" title="\mathcal{X}=" /></a><code class="language-plaintext highlighter-rouge">src_tokens</code><a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;=(token_{0},...,token_{src\_len})" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;=(token_{0},...,token_{src\_len})" title="=(token_{0},...,token_{src\_len})" /></a> which are then converted to continuous vector representions <code class="language-plaintext highlighter-rouge">x = self.forward_embedding(src_tokens, token_embeddings)</code>, which is made of the sum of the (scaled) embedding lookup and the positional embedding: <code class="language-plaintext highlighter-rouge">x = self.embed_scale * self.embed_tokens(src_tokens) + self.embed_positions(src_tokens)</code>.
 
-From now on, let's consider $X^L$ as the $L$ encoder layer input sequence. $X^{1}$ refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">src_tokens</code>.
+From now on, let's consider <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;X^L" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;X^L" title="X^L" /></a> as the <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;L" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;L" title="L" /></a> encoder layer input sequence. <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;X^{1}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;X^{1}" title="X^{1}" /></a> refers then to the vectors representation of the input sequence tokens of the first layer, after computing <code class="language-plaintext highlighter-rouge">self.forward_embedding</code> on <code class="language-plaintext highlighter-rouge">src_tokens</code>.
 
 <p align="center">
 <img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/operations.png?raw=true" width="45%" align="center"/>
 </p>
 
-Note that although $X^L$ is represented in fairseq as a tensor of shape <code class="language-plaintext highlighter-rouge">src_len x batch x encoder_embed_dim</code>, for the shake of simplicity, we take <code class="language-plaintext highlighter-rouge">batch=1</code> in the upcoming mathematical notation and just consider it as a <code class="language-plaintext highlighter-rouge">src_len x encoder_embed_dim</code> matrix.
+Note that although <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;X^L" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;X^L" title="X^L" /></a> is represented in fairseq as a tensor of shape <code class="language-plaintext highlighter-rouge">src_len x batch x encoder_embed_dim</code>, for the shake of simplicity, we take <code class="language-plaintext highlighter-rouge">batch=1</code> in the upcoming mathematical notation and just consider it as a <code class="language-plaintext highlighter-rouge">src_len x encoder_embed_dim</code> matrix.
 
-$$
-X^L = \begin{bmatrix}
-x_{0}\\
-\vdots\\
-x_{src\_len}
-\end{bmatrix}
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;X^L&space;=&space;\begin{bmatrix}&space;x_{0}\\&space;\vdots\\&space;x_{src\_len}&space;\end{bmatrix}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;X^L&space;=&space;\begin{bmatrix}&space;x_{0}\\&space;\vdots\\&space;x_{src\_len}&space;\end{bmatrix}" title="X^L = \begin{bmatrix} x_{0}\\ \vdots\\ x_{src\_len} \end{bmatrix}" /></a>
 
-Where $x_{i} \in \mathbb{R}^{encoder\_embed\_dim}$.
+Where <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;x_{i}&space;\in&space;\mathbb{R}^{encoder\_embed\_dim}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;x_{i}&space;\in&space;\mathbb{R}^{encoder\_embed\_dim}" title="x_{i} \in \mathbb{R}^{encoder\_embed\_dim}" /></a>.
 
 
 ```python
@@ -157,7 +151,7 @@ class TransformerEncoderLayer(nn.Module):
 
 Then, the result is passed through a position-wise feed-forward network composed by two fully connected layers, <code class="language-plaintext highlighter-rouge">fc1</code> and <code class="language-plaintext highlighter-rouge">fc2</code> with a ReLU activation in between (<code class="language-plaintext highlighter-rouge">self.activation_fn(self.fc1(x))</code>) and dropout <code class="language-plaintext highlighter-rouge">self.dropout_module(x)</code>.
 
-$$\text{Feed Forward}(x)=\max(0, xW_1 + b_1) W_2 + b_2$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\text{Feed&space;Forward}(x)=\max(0,&space;xW_1&space;&plus;&space;b_1)&space;W_2&space;&plus;&space;b_2" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\text{Feed&space;Forward}(x)=\max(0,&space;xW_1&space;&plus;&space;b_1)&space;W_2&space;&plus;&space;b_2" title="\text{Feed Forward}(x)=\max(0, xW_1 + b_1) W_2 + b_2" /></a>
 
 
 
@@ -220,23 +214,18 @@ Each encoder layer input $X^L$, shown as <code class="language-plaintext highlig
 
 The self-attention module does the following operation:
 
-$$
-\mathrm{softmax}(\frac{QK^\top}{\sqrt{d_{k}}})V
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\mathrm{softmax}(\frac{QK^\top}{\sqrt{d_{k}}})V" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\mathrm{softmax}(\frac{QK^\top}{\sqrt{d_{k}}})V" title="\mathrm{softmax}(\frac{QK^\top}{\sqrt{d_{k}}})V" /></a>
 
 
 ```python
     attn_weights = torch.bmm(q, k.transpose(1, 2)) # QK^T multiplication
 ```
 
-Given a token in the input, $i \in X^L$, it is passed to the self-attention function. Then, by means of dot products, scalar values (scores) are obtained between the query vector $q_{i} = iW^Q$ and every key vector of the input sequence $k_{j}$. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher scores.
+Given a token in the input, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i&space;\in&space;X^L" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;i&space;\in&space;X^L" title="i \in X^L" /></a>, it is passed to the self-attention function. Then, by means of dot products, scalar values (scores) are obtained between the query vector <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;q_{i}&space;=&space;iW^Q" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;q_{i}&space;=&space;iW^Q" title="q_{i} = iW^Q" /></a> and every key vector of the input sequence <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;k_{j}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;k_{j}" title="k_{j}" /></a>. The intuition is that this performs a similarity operation, similar queries and keys vectors will yield higher scores.
 
-This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding $i$. By multiplying $q_{i}$ by the matrix $K^{T}$, a list of <code class="language-plaintext highlighter-rouge">src_len</code> scores is output. The scores are then passed through a softmax function giving bounded values:
+This scores represents how much attention is paid by the self-attention layer to other parts of the sequence when encoding <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;i" title="i" /></a>. By multiplying <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;q_{i}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;q_{i}" title="q_{i}" /></a> by the matrix <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;K^{T}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;K^{T}" title="K^{T}" /></a>, a list of <code class="language-plaintext highlighter-rouge">src_len</code> scores is output. The scores are then passed through a softmax function giving bounded values:
 
-$$
-\alpha_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})
-= \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j=0}^{src\_len} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\alpha_{i}&space;=&space;\text{softmax}(\frac{\mathbf{q}_i&space;{K}^\top}{\sqrt{d_k}})&space;=&space;\frac{\exp(\frac{\mathbf{q}_i&space;{K}^\top}{\sqrt{d_k}})}{&space;\sum_{j=0}^{src\_len}&space;\exp(\frac{\mathbf{q}_i&space;k_{j}^\top}{\sqrt{d_k}})}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\alpha_{i}&space;=&space;\text{softmax}(\frac{\mathbf{q}_i&space;{K}^\top}{\sqrt{d_k}})&space;=&space;\frac{\exp(\frac{\mathbf{q}_i&space;{K}^\top}{\sqrt{d_k}})}{&space;\sum_{j=0}^{src\_len}&space;\exp(\frac{\mathbf{q}_i&space;k_{j}^\top}{\sqrt{d_k}})}" title="\alpha_{i} = \text{softmax}(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}}) = \frac{\exp(\frac{\mathbf{q}_i {K}^\top}{\sqrt{d_k}})}{ \sum_{j=0}^{src\_len} \exp(\frac{\mathbf{q}_i k_{j}^\top}{\sqrt{d_k}})}" /></a>
 
 
 ```python
@@ -246,22 +235,20 @@ $$
     attn_weights = attn_weights_float.type_as(attn_weights)
 ```
 
-The division by the square root of the dimension of the key vectors $d_{k}$ (for getting more stable gradients) is done previously <code class="language-plaintext highlighter-rouge">q *= self.scaling</code> instead in fairseq.
+The division by the square root of the dimension of the key vectors <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;d_{k}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;d_{k}" title="d_{k}" /></a> (for getting more stable gradients) is done previously <code class="language-plaintext highlighter-rouge">q *= self.scaling</code> instead in fairseq.
 
 
-For example, given the sentence "the nice cat walks away from us" for the token $i=\text{from}$, its corresponding attention weights $\alpha_{i}$ for every other token $j$ in the input sequence could be:
+For example, given the sentence "the nice cat walks away from us" for the token <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i=\text{from}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;i=\text{from}" title="i=\text{from}" /></a>, its corresponding attention weights <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\alpha_{i}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\alpha_{i}" title="\alpha_{i}" /></a> for every other token $j$ in the input sequence could be:
 
 <p align="center">
 <img src="https://github.com/javiferran/Transformer-Blog/blob/main/The_Transformer_Blog_files/probs.jpg?raw=true" width="50%" align="center"/>
 </p>
 
-Once we have normalized scores for every pair of tokens $\{i,j\}$, we multiply these weights by the value vector $v_{j} \forall j \in X^L$ (each row in matrix $V$) and finally sum up those vectors:
+Once we have normalized scores for every pair of tokens <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\{i,j\}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\{i,j\}" title="\{i,j\}" /></a>, we multiply these weights by the value vector <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;v_{j}&space;\forall&space;j&space;\in&space;X^L" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;v_{j}&space;\forall&space;j&space;\in&space;X^L" title="v_{j} \forall j \in X^L" /></a> (each row in matrix <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;V" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;V" title="V" /></a>) and finally sum up those vectors:
 
-$$
-z_{i} = \sum_{j=0}^{src\_len}\alpha_{i,j}v_{j}
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;z_{i}&space;=&space;\sum_{j=0}^{src\_len}\alpha_{i,j}v_{j}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;z_{i}&space;=&space;\sum_{j=0}^{src\_len}\alpha_{i,j}v_{j}" title="z_{i} = \sum_{j=0}^{src\_len}\alpha_{i,j}v_{j}" /></a>
 
-Where $z_{i}$ represents row $i$ of $Z$. By doing the matrix multiplication of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and $V$, $\mathrm{softmax}(\frac{QK^{T}}{\sqrt{d_k}})V$, we directly get matrix $Z$.
+Where <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;z_{i}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;z_{i}" title="z_{i}" /></a> represents row <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;i" title="i" /></a> of <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;Z" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;Z" title="Z" /></a>. By doing the matrix multiplication of the attention weight matrix <code class="language-plaintext highlighter-rouge">attn_weights</code> and <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;V" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;V" title="V" /></a>, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\mathrm{softmax}(\frac{QK^{T}}{\sqrt{d_k}})V" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\mathrm{softmax}(\frac{QK^{T}}{\sqrt{d_k}})V" title="\mathrm{softmax}(\frac{QK^{T}}{\sqrt{d_k}})V" /></a>, we directly get matrix <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;Z" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;Z" title="Z" /></a>.
 
 
 ```python
