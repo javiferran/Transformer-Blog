@@ -151,8 +151,9 @@ class TransformerEncoderLayer(nn.Module):
 
 Then, the result is passed through a position-wise feed-forward network composed by two fully connected layers, <code class="language-plaintext highlighter-rouge">fc1</code> and <code class="language-plaintext highlighter-rouge">fc2</code> with a ReLU activation in between (<code class="language-plaintext highlighter-rouge">self.activation_fn(self.fc1(x))</code>) and dropout <code class="language-plaintext highlighter-rouge">self.dropout_module(x)</code>.
 
+<p align="center">
 <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\text{Feed&space;Forward}(x)=\max(0,&space;xW_1&space;&plus;&space;b_1)&space;W_2&space;&plus;&space;b_2" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\inline&space;\text{Feed&space;Forward}(x)=\max(0,&space;xW_1&space;&plus;&space;b_1)&space;W_2&space;&plus;&space;b_2" title="\text{Feed Forward}(x)=\max(0, xW_1 + b_1) W_2 + b_2" /></a>
-
+</p>
 
 
 
